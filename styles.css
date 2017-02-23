@@ -1,0 +1,69 @@
+
+textarea {
+    color:darkslategrey;
+    width: 71%;
+    height: 50%;
+    -webkit-box-sizing: border-box; 
+    -moz-box-sizing: border-box;    
+    box-sizing: border-box;         
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: aliceblue;
+}
+
+
+
+ul {
+    list-style: none;
+}
+
+.hiden { 
+    display: none;
+    visibility:hidden;
+}
+
+#SignIn {
+    margin:7.5px;
+   
+}
+
+#NoteTitle{
+    padding-left: 5px;
+    color:darkslategrey;
+    font-size: 26px;
+    height: 40px;
+    width: 71%;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    background-color: aliceblue;
+}
+
+
+#spacer {
+    color:grey;margin-top:13px;
+}
+
+#Notes {
+    color:darkslategrey;
+    max-height:860px;
+    height: 80%;
+    overflow:hidden; 
+    overflow-y:scroll;
+    background-color: aliceblue;
+    margin-left: 45px;
+    padding: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+body {
+    background-image: url("Background.jpg");
+}
+
+.well {
+    padding-right: 15px;
+}
+
