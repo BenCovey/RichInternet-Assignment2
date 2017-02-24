@@ -1,5 +1,10 @@
 var notes;
 var sess;
+var edit = false;
+var name;
+var email;
+var search;
+var searching = false;
 WL.Event.subscribe("auth.login", onLogin);
                 WL.init({
                     client_id: APP_CLIENT_ID,
@@ -34,8 +39,11 @@ WL.Event.subscribe("auth.login", onLogin);
                                 $("#NoteTitle").val(data.value[0].title);
                                 for(var i = 0; i < data.value.length; i++){
                                     //console.log(data.value[i]);
-                                    list.append('<li id="note' + i + '" class = "well well-sm"><a onclick="displayNote('+i+')">' + data.value[i].title + "</a></li>");
-                                    
+                                    if(i != 0){
+                                            list.append('<li id="wellnote' + i + '" class = "well well-sm"><a id = "note' + i + '" onclick="displayNote('+i+')">' + data.value[i].title + "</a></li>");
+                                        }else{
+                                            list.append('<li id="wellnote' + i + '" class = "well active"><a  id = "note' + i + '" onclick="displayNote('+i+')">' + data.value[i].title + '</a><i class=" fa fa-arrow-left" aria-hidden="true"></i></li>');
+                                        }
                                     }//end for
                                 }//end if
                             },
@@ -54,6 +62,8 @@ WL.Event.subscribe("auth.login", onLogin);
 //                                  debugger;
 //                                  var access_token = WL.getLastAccessToken();
                                   console.log("Logged In.");
+                                  name = response.first_name + " " + response.last_name;
+                                  email = response.email;
 //                                document.getElementById("info").innerText =
 //                                    "Hello, " + response.first_name + " " + response.last_name + "!";
                                   
@@ -80,10 +90,10 @@ if(window.location.href.indexOf("#access_token") > -1) {
     showWelcomeMessage(access_token);
 }
 
-function reloadpage(){
-    location.reload();
-    $("#signin").removeAttr("onclick")
-}//end reload page
+//function reloadpage(){
+//    location.reload();
+//    $("#signin").removeAttr("onclick")
+//}//end reload page
 
 
 function userSignedIn(err, accesstoken) {
@@ -102,22 +112,33 @@ function showElements(){
     $('.hiden').removeClass('hiden');
     $("#NoteTitle").prop("disabled", true);
     $("#Body").prop("disabled", true);
-    $("#NavRight").append("<li><a onclick='newNote();'>Add</a></li>" +
-                  "<li><a>Save</a></li>" +
-                  "<li><a>Edit</a></li>" +
+    $("#NavRight").append("<li><a onclick='newNote();'>NEW <i class='fa fa-plus fa-2x' aria-hidden='true'></i></a></li>" +
+                  "<li><a>SAVE <i class='fa fa-cloud fa-2x' aria-hidden='true'></i></a></li>" +
+                  "<li><a onclick='editEnable()'>EDIT <i onclick='editEnable()' class='fa fa-pencil fa-2x' aria-hidden='true'></i></a></li>" +
                   "<li id='spacer' >|</li>" +
-                  "<li><a>Delete</a></li>" +
+                  "<li><a>DELETE <i class='fa fa-trash-o fa-2x' aria-hidden='true'></i></a></li>" +
                   "<li class='dropdown'>" +
                   "<a class='dropdown-toggle' data-toggle='dropdown' href='#'>..." +
                   "<span class='caret'></span></a>" +
                   "<ul class='dropdown-menu'>" +
-                  "<li><a href='#'>About</a></li>" +
+                  "<li><a href='#' onclick='about()'>About</a></li>" +
                   "</ul>" +
                   "</li>");
 }
 
+function editEnable(){
+    if(edit == false){
+        edit = true;
+        $("#NoteTitle").prop("disabled", false);
+        $("#Body").prop("disabled", false);
+    }else{
+        edit = false;
+        $("#NoteTitle").prop("disabled", true);
+        $("#Body").prop("disabled", true);
+    }
+}
+
 function newNote(){
-    
 $.ajax({
     url: "https://www.onenote.com/api//v1.0/me/notes/pages",
     type: "POST",
@@ -139,6 +160,85 @@ $.ajax({
     });
 }
 
+function about(){
+    $(".dialogtext").text("About\nUSER:" + name +"\nThis is the about tab there is not really anything special about this program.")
+    $("#dialog").dialog();    
+}
+
+function search(text){
+    var first = true;
+    var notenum = 0;
+    if(text == null){
+        displayNote(0);
+        //console.log("Display All")
+        searching = false;
+    }else{
+        searching = true;
+        search = text;
+        //debugger;
+        //console.log(text);
+        var list = $('#Notes');
+        list.empty();
+        for(var i = 0; i < notes.value.length; i++){
+            if(notes.value[i].title.includes(text)){
+            //console.log(data.value[i]);
+            if(first == false){ 
+                list.append('<li id="wellnote' + i + '" class = "well well-sm"><a id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + "</a></li>");
+            }else{//end if
+                first = false;
+                notenum = i
+                list.append('<li id="wellnote' + i + '" class = "well active"><a  id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + '</a><i class=" fa fa-arrow-left" aria-hidden="true"></i></li>');
+            }//end else if
+        }//end if
+    }//end for
+    //$("#Body").val(notes.value[notenum].body);
+    $("#NoteTitle").val(notes.value[notenum].title);
+        return false;
+    }
+}
+
+function ResetSearch(){
+    if(searching == true){
+    search = null;
+    searching = false;
+    displayNote(0);
+    }else{
+        alert("No Search to reset.")
+    }
+}
+
+function displaysearch(text, num ){
+    var first = true;
+    var notenum = 0;
+    if(text == null){
+        displayNote(0);
+        //console.log("Display All")
+        searching = false;
+    }else{
+        searching = true;
+        search = text;
+        //debugger;
+        //console.log(text);
+        var list = $('#Notes');
+        list.empty();
+        for(var i = 0; i < notes.value.length; i++){
+            if(notes.value[i].title.includes(text)){
+            //console.log(data.value[i]);
+            if(i != num){ 
+                list.append('<li id="wellnote' + i + '" class = "well well-sm"><a id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + "</a></li>");
+            }else{//end if
+                first = false;
+                notenum = i
+                list.append('<li id="wellnote' + i + '" class = "well active"><a  id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + '</a><i class=" fa fa-arrow-left" aria-hidden="true"></i></li>');
+            }//end else if
+        }//end if
+    }//end for
+    //$("#Body").val(notes.value[notenum].body);
+    $("#NoteTitle").val(notes.value[notenum].title);
+        return false;
+    }
+}
+    
 function displayNote(num){
 //    $.ajax({
 //       url: "https://www.onenote.com/api/v1.0/me/notes/pages/" + num + "/preview/",
@@ -154,10 +254,25 @@ function displayNote(num){
 //        }
 //    
 //    });
-
+    if(searching == true){
+        displaysearch(search, num);
+    }else{
     //console.log(notes.value[num]);
+    var list = $('#Notes');
+    list.empty();
+    for(var i = 0; i < notes.value.length; i++){
+        //console.log(data.value[i]);
+        if(i != num){
+            list.append('<li id="wellnote' + i + '" class = "well well-sm"><a id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + "</a></li>");
+        }else{
+            list.append('<li id="wellnote' + i + '" class = "well active"><a  id = "note' + i + '" onclick="displayNote('+i+')">' + notes.value[i].title + '</a><i class=" fa fa-arrow-left" aria-hidden="true"></i></li>');
+        }
+
+    }//end for
+    //$("#note" + num).append(" <--")
     $("#Body").val(notes.value[num].body);
     $("#NoteTitle").val(notes.value[num].title);
+    }
 }
 
 function showWelcomeMessage(access_token) {

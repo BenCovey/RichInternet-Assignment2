@@ -12,10 +12,24 @@ textarea {
     background-color: aliceblue;
 }
 
+#PageTitle{
+    font-size: 26px;
+}
 
+#signin{
+    padding-top: 7px;
+}
 
 ul {
     list-style: none;
+}
+
+#dialog{
+    background-color: grey;
+}
+
+.dialogtext{
+    background-color: gainsboro;
 }
 
 .hiden { 
@@ -50,7 +64,7 @@ ul {
     max-height:860px;
     height: 80%;
     overflow:hidden; 
-    overflow-y:scroll;
+    overflow-y:auto;
     background-color: aliceblue;
     margin-left: 45px;
     padding: 5px;
